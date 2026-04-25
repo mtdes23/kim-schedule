@@ -10,7 +10,8 @@ import {
   Sparkles,
   Trash2,
   BookOpen,
-  Sun
+  Sun,
+  Copy
 } from 'lucide-vue-next'
 import html2canvas from 'html2canvas'
 import confetti from 'canvas-confetti'
@@ -89,6 +90,10 @@ const exportAsImage = async () => {
     <div class="actions">
       <button class="btn btn-ghost" @click="handleClear" title="Xóa lịch tuần này">
         <Trash2 :size="18" class="text-danger" />
+      </button>
+      <button class="btn btn-ghost" @click="store.copyToNextWeek" title="Copy sang tuần sau">
+        <Copy :size="18" class="text-primary" />
+        <span class="hide-mobile">Copy tuần sau</span>
       </button>
       <button class="btn btn-ghost" @click="handleAutoSchedule" title="Tự động lấp đầy">
         <Sparkles :size="18" class="text-magic" />

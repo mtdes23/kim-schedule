@@ -24,7 +24,9 @@ import {
   Sparkles,
   User,
   ArrowRight,
-  LogOut
+  LogOut,
+  RefreshCw,
+  Utensils
 } from 'lucide-vue-next'
 import draggable from 'vuedraggable'
 import confetti from 'canvas-confetti'
@@ -200,14 +202,24 @@ const handleLogout = () => {
                     <input type="time" :value="act.endTime" @change="handleUpdate(act.id, 'endTime', $event.target.value)">
                   </div>
                   
-                  <div class="tile-note">
-                    <StickyNote :size="12" />
-                    <input 
-                      type="text" 
-                      :value="act.notes" 
-                      @input="handleUpdate(act.id, 'notes', $event.target.value)"
-                      placeholder="Ghi chú nhanh..."
+                  <div class="tile-actions-row">
+                    <div class="tile-note">
+                      <StickyNote :size="12" />
+                      <input 
+                        type="text" 
+                        :value="act.notes" 
+                        @input="handleUpdate(act.id, 'notes', $event.target.value)"
+                        placeholder="Ghi chú..."
+                      >
+                    </div>
+                    <button 
+                      class="btn-recurring" 
+                      :class="{ 'active': act.isRecurring }"
+                      @click="handleUpdate(act.id, 'isRecurring', !act.isRecurring)"
+                      title="Lặp lại hàng tuần"
                     >
+                      <RefreshCw :size="12" />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -224,8 +236,18 @@ const handleLogout = () => {
       <div class="analytics-footer">
         <div class="analytics-header">
           <div class="title">
-            <PieChart :size="18" />
             <span class="font-heading">Phân tích tuần này</span>
+          </div>
+          
+          <div class="food-recommendation" v-if="store.getFoodSuggestion(store.weekDays[activeDayIndex])">
+            <div class="food-label">
+              <Utensils :size="14" /> 
+              <span>Gợi ý bữa tối {{ format(store.weekDays[activeDayIndex], 'EEEE', { locale: vi }) }}:</span>
+            </div>
+            <div class="food-value">
+              <span class="food-icon">{{ store.getFoodSuggestion(store.weekDays[activeDayIndex]).icon }}</span>
+              <span class="food-name">{{ store.getFoodSuggestion(store.weekDays[activeDayIndex]).name }}</span>
+            </div>
           </div>
         </div>
 
@@ -534,6 +556,25 @@ const handleLogout = () => {
   background: rgba(255, 255, 255, 0.05);
   color: white;
 }
+
+.tile-actions-row { display: flex; align-items: center; gap: 8px; }
+.btn-recurring { 
+  width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--border); 
+  background: rgba(255, 255, 255, 0.05); color: var(--text-muted); cursor: pointer; transition: 0.2s;
+  display: grid; place-items: center;
+}
+.btn-recurring:hover { border-color: var(--primary); color: var(--primary); }
+.btn-recurring.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 0 10px var(--primary-glow); }
+
+/* Food Recommendation Style */
+.food-recommendation { 
+  display: flex; align-items: center; gap: 12px; padding: 6px 12px; 
+  background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+.food-label { display: flex; align-items: center; gap: 6px; color: var(--text-muted); font-weight: 600; }
+.food-value { display: flex; align-items: center; gap: 6px; color: var(--secondary); font-weight: 800; }
+.food-icon { font-size: 1.1rem; }
 
 /* Analytics Footer */
 .analytics-footer { padding: 1.5rem 2rem; background: rgba(20, 20, 25, 0.8); border-top: 1px solid var(--border); }

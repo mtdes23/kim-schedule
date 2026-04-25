@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { startOfWeek, addDays, isSameDay, parseISO, format, differenceInMinutes, parse } from 'date-fns'
+import { startOfWeek, addDays, isSameDay, parseISO, format, differenceInMinutes, parse, addWeeks } from 'date-fns'
 
 export const useScheduleStore = defineStore('schedule', {
   state: () => {
@@ -23,7 +23,14 @@ export const useScheduleStore = defineStore('schedule', {
       activityTypes,
       assignments: JSON.parse(localStorage.getItem('kim-range-assignments')) || [],
       holidays: JSON.parse(localStorage.getItem('kim-holidays')) || [],
-      currentWeekStart: startOfWeek(new Date(), { weekStartsOn: 1 })
+      currentWeekStart: startOfWeek(new Date(), { weekStartsOn: 1 }),
+      foodSuggestions: [
+        { min: 0, max: 100, name: 'Cơm nắm 7-11 / Trà trứng', icon: '🍙' },
+        { min: 101, max: 200, name: 'Bento siêu thị / Mì tôm', icon: '🍱' },
+        { min: 201, max: 500, name: 'Mì bò / Cơm thịt kho (Lu Rou Fan)', icon: '🍜' },
+        { min: 501, max: 1000, name: 'Lẩu mini / Gà rán Shilin', icon: '🍲' },
+        { min: 1001, max: 9999, name: 'Lẩu Haidilao / Buffet khách sạn', icon: '🔥' }
+      ]
     }
   },
 
@@ -138,9 +145,34 @@ export const useScheduleStore = defineStore('schedule', {
   actions: {
     getAssignmentsByDay(date) {
       if (!date) return []
-      return this.assignments
-        .filter(a => isSameDay(parseISO(a.date), date))
-        .sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''))
+      const dayOfWeek = date.getDay()
+      
+      // Get normal assignments for this specific date
+      const normal = this.assignments.filter(a => !a.isRecurring && isSameDay(parseISO(a.date), date))
+      
+      // Get recurring assignments for this day of week
+      const recurring = this.assignments.filter(a => a.isRecurring && parseISO(a.date).getDay() === dayOfWeek)
+      
+      return [...normal, ...recurring].sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''))
+    },
+
+    getDailyEarnings(date) {
+      const dayAssignments = this.getAssignmentsByDay(date)
+      return dayAssignments.reduce((total, a) => {
+        const type = this.activityTypes.find(t => t.id === a.activityId)
+        if (type && type.isWork) {
+          const start = parse(a.startTime, 'HH:mm', new Date())
+          const end = parse(a.endTime, 'HH:mm', new Date())
+          const hours = differenceInMinutes(end, start) / 60
+          return total + (hours * (Number(type.rate) || 0))
+        }
+        return total
+      }, 0)
+    },
+
+    getFoodSuggestion(date) {
+      const earnings = this.getDailyEarnings(date)
+      return this.foodSuggestions.find(f => earnings >= f.min && earnings <= f.max) || this.foodSuggestions[0]
     },
 
     isDayHoliday(date) {
@@ -256,6 +288,41 @@ export const useScheduleStore = defineStore('schedule', {
           return date < this.currentWeekStart || date > addDays(this.currentWeekStart, 6)
         })
         this.saveToLocal()
+      }
+    },
+
+    copyToNextWeek() {
+      const nextWeekStart = addWeeks(this.currentWeekStart, 1)
+      const nextWeekEnd = addDays(nextWeekStart, 6)
+      
+      // Filter current week assignments
+      const currentWeekAssignments = this.assignments.filter(a => {
+        const date = parseISO(a.date)
+        return date >= this.currentWeekStart && date <= addDays(this.currentWeekStart, 6)
+      })
+
+      if (currentWeekAssignments.length === 0) {
+        alert('Tuần này chưa có lịch để copy.')
+        return
+      }
+
+      if (confirm(`Copy ${currentWeekAssignments.length} thẻ sang tuần tiếp theo (${format(nextWeekStart, 'dd/MM')} - ${format(nextWeekEnd, 'dd/MM')})?`)) {
+        // Remove existing in next week
+        this.assignments = this.assignments.filter(a => {
+          const date = parseISO(a.date)
+          return date < nextWeekStart || date > nextWeekEnd
+        })
+
+        // Add cloned ones
+        const newAssignments = currentWeekAssignments.map(a => ({
+          ...a,
+          id: Math.random().toString(36).substr(2, 9),
+          date: addWeeks(parseISO(a.date), 1).toISOString()
+        }))
+
+        this.assignments.push(...newAssignments)
+        this.saveToLocal()
+        this.setWeek(nextWeekStart)
       }
     },
 
