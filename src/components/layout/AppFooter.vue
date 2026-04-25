@@ -7,7 +7,7 @@ import { Facebook, ExternalLink, Heart } from 'lucide-vue-next'
     <div class="footer-content">
       <div class="footer-brand">
         <h3>Kim's Schedule</h3>
-        <p>Hệ thống quản lý lịch làm việc thông minh</p>
+        <p>Trợ lý Công việc</p>
       </div>
 
       <div class="footer-links">

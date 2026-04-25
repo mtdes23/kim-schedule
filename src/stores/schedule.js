@@ -161,6 +161,12 @@ export const useScheduleStore = defineStore('schedule', {
     },
 
     updateActivityType(id, updates) {
+      const index = this.activityTypes.findIndex(t => t.id === id)
+      if (index > -1) {
+        this.activityTypes[index] = { ...this.activityTypes[index], ...updates }
+        localStorage.setItem('kim-activity-types', JSON.stringify(this.activityTypes))
+      }
+    },
 
     addActivityType(isWork = true) {
       const newId = 'act-' + Math.random().toString(36).substr(2, 5)

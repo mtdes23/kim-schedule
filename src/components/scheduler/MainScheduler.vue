@@ -118,7 +118,7 @@ const handleLogout = () => {
           </div>
           <div class="user-meta">
             <h3 class="font-heading">{{ store.userProfile.name }}'s Dashboard</h3>
-            <p class="text-muted"><LayoutGrid :size="12" /> Taiwan Student Lifestyle</p>
+            <p class="text-muted"><LayoutGrid :size="12" /> Taiwan Lifestyle</p>
           </div>
         </div>
         

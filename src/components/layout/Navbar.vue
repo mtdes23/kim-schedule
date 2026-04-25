@@ -1,6 +1,6 @@
 <script setup>
 import { useScheduleStore } from '../../stores/schedule'
-import { format, addWeeks, subWeeks } from 'date-fns'
+import { format, addWeeks, subWeeks, addDays } from 'date-fns'
 import { vi } from 'date-fns/locale'
 import { 
   ChevronLeft, 
@@ -63,7 +63,7 @@ const exportAsImage = async () => {
       <div class="logo-icon">K</div>
       <div>
         <h1>Kim's Schedule</h1>
-        <p class="subtitle">Taiwan Student Planner</p>
+        <p class="subtitle">Taiwan Lifestyle</p>
       </div>
     </div>
 
@@ -76,7 +76,7 @@ const exportAsImage = async () => {
         <div class="current-week">
           <span>
             {{ format(store.currentWeekStart, 'dd/MM', { locale: vi }) }} 
-            - {{ format(addWeeks(store.currentWeekStart, 0), 'dd/MM', { locale: vi }) }}
+            - {{ format(addDays(store.currentWeekStart, 6), 'dd/MM', { locale: vi }) }}
           </span>
         </div>
 
@@ -84,19 +84,6 @@ const exportAsImage = async () => {
           <ChevronRight :size="20" />
         </button>
       </div>
-
-      <!-- Mode Toggle -->
-      <button 
-        class="mode-toggle" 
-        :class="{ 'semester': store.isSemesterMode }"
-        @click="store.toggleSemesterMode"
-      >
-        <div class="toggle-icon">
-          <BookOpen v-if="store.isSemesterMode" :size="16" />
-          <Sun v-else :size="16" />
-        </div>
-        <span>{{ store.isSemesterMode ? 'Học kỳ (Max 20h)' : 'Kỳ nghỉ (Max 48h)' }}</span>
-      </button>
     </div>
 
     <div class="actions">
