@@ -26,7 +26,8 @@ import {
   ArrowRight,
   LogOut,
   RefreshCw,
-  Utensils
+  Utensils,
+  HelpCircle
 } from 'lucide-vue-next'
 import draggable from 'vuedraggable'
 import confetti from 'canvas-confetti'
@@ -34,6 +35,7 @@ import confetti from 'canvas-confetti'
 const store = useScheduleStore()
 const showSettings = ref(false)
 const showSetup = ref(false)
+const showHelp = ref(false)
 const setupStep = ref(1)
 const setupForm = ref({
   name: store.userProfile.name === 'Kim' ? '' : store.userProfile.name,
@@ -144,6 +146,10 @@ const handleLogout = () => {
               <Wallet :size="14" /> <span>{{ Math.round(store.estimatedSalary).toLocaleString() }} <span class="unit">TWD</span></span>
             </div>
           </div>
+          
+          <button class="btn-icon-round" @click="showHelp = true" title="Hướng dẫn">
+            <HelpCircle :size="20" />
+          </button>
           
           <button class="btn-icon-round" @click="showSettings = true" title="Thiết lập">
             <Settings :size="20" />
@@ -359,6 +365,66 @@ const handleLogout = () => {
             </div>
           </div>
 
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Help Modal -->
+    <Teleport to="body">
+      <div v-if="showHelp" class="modal-overlay" @click.self="showHelp = false">
+        <div class="glass-card modal-panel help-panel animate-fade">
+          <div class="panel-header">
+            <h2 class="font-heading">Hướng dẫn sử dụng</h2>
+            <button class="btn-icon-round" @click="showHelp = false"><X :size="20" /></button>
+          </div>
+
+          <div class="help-body scrollable">
+            <div class="help-section">
+              <div class="help-item">
+                <div class="help-icon"><LayoutGrid :size="20" /></div>
+                <div class="help-text">
+                  <h4>Bảng Kanban mượt mà</h4>
+                  <p>Kéo và thả các thẻ công việc để thay đổi lịch trình. Trên điện thoại, bạn có thể vuốt qua lại giữa các ngày.</p>
+                </div>
+              </div>
+
+              <div class="help-item">
+                <div class="help-icon"><RefreshCw :size="20" /></div>
+                <div class="help-text">
+                  <h4>Công việc lặp lại (Recurring)</h4>
+                  <p>Bật biểu tượng 🔄 trên thẻ để công việc đó tự động xuất hiện ở mọi tuần tiếp theo. Tiết kiệm thời gian nhập liệu!</p>
+                </div>
+              </div>
+
+              <div class="help-item">
+                <div class="help-icon"><ArrowRight :size="20" /></div>
+                <div class="help-text">
+                  <h4>Copy sang tuần sau</h4>
+                  <p>Sử dụng nút 📑 trên thanh Menu để sao chép toàn bộ lịch trình tuần này sang tuần tới chỉ trong 1 giây.</p>
+                </div>
+              </div>
+
+              <div class="help-item">
+                <div class="help-icon"><Utensils :size="20" /></div>
+                <div class="help-text">
+                  <h4>Gợi ý món ăn Đài Loan</h4>
+                  <p>Dựa trên thu nhập trong ngày, hệ thống sẽ gợi ý bữa tối phù hợp (từ cơm nắm 🍙 đến Haidilao 🔥) ở phần Phân tích.</p>
+                </div>
+              </div>
+
+              <div class="help-item">
+                <div class="help-icon"><Settings :size="20" /></div>
+                <div class="help-text">
+                  <h4>Thiết lập linh hoạt</h4>
+                  <p>Vào phần Cài đặt để thêm bớt các loại công việc, đổi màu sắc hoặc điều chỉnh mức lương TWD/h của bạn.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="panel-footer">
+            <button class="btn btn-primary w-full" @click="showHelp = false">Đã hiểu!</button>
+          </div>
         </div>
       </div>
     </Teleport>
@@ -593,6 +659,18 @@ const handleLogout = () => {
 .ana-card .value { font-size: 1.6rem; font-weight: 900; font-family: var(--font-heading); color: white; }
 .ana-card .bar-bg { height: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 4px; margin-top: 15px; overflow: hidden; }
 .ana-card .bar-fill { height: 100%; background: var(--magic); transition: 1.5s cubic-bezier(0.2, 1, 0.3, 1); }
+
+/* Help Panel Specifics */
+.help-panel { max-width: 580px; }
+.help-section { display: flex; flex-direction: column; gap: 1.5rem; }
+.help-item { display: flex; gap: 1.25rem; align-items: flex-start; }
+.help-icon { 
+  width: 44px; height: 44px; background: var(--magic); border-radius: 12px; 
+  display: grid; place-items: center; color: white; flex-shrink: 0;
+  box-shadow: 0 5px 15px var(--primary-glow);
+}
+.help-text h4 { font-size: 1.1rem; margin-bottom: 4px; color: white; }
+.help-text p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
 
 /* Modal Panel */
 .modal-panel { width: 100%; max-width: 500px; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
