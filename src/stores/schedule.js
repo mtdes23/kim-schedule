@@ -17,7 +17,8 @@ export const useScheduleStore = defineStore('schedule', {
       : defaultTypes
 
     return {
-      userProfile: { name: 'Kim', position: 'Personal' },
+      userProfile: JSON.parse(localStorage.getItem('kim-user-profile')) || { name: 'Kim', position: 'Personal' },
+      hasSeenSetup: JSON.parse(localStorage.getItem('kim-has-seen-setup')) || false,
       isSemesterMode: JSON.parse(localStorage.getItem('kim-semester-mode')) ?? true,
       monthlyExpenses: JSON.parse(localStorage.getItem('kim-monthly-expenses')) || 0,
       foodPrices: { tea: 60, bento: 100, noodle: 180 },
@@ -252,6 +253,21 @@ export const useScheduleStore = defineStore('schedule', {
 
     setWeek(date) {
       this.currentWeekStart = startOfWeek(date, { weekStartsOn: 1 })
+    },
+
+    completeSetup(profile, expenses, rates) {
+      this.userProfile = { ...this.userProfile, ...profile }
+      this.monthlyExpenses = Number(expenses) || 0
+      
+      // Update rates for work activities
+      Object.keys(rates).forEach(id => {
+        this.updateActivityType(id, { rate: Number(rates[id]) })
+      })
+
+      this.hasSeenSetup = true
+      localStorage.setItem('kim-user-profile', JSON.stringify(this.userProfile))
+      localStorage.setItem('kim-monthly-expenses', JSON.stringify(this.monthlyExpenses))
+      localStorage.setItem('kim-has-seen-setup', JSON.stringify(true))
     }
   }
 })

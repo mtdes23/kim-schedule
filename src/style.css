@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
-
 :root {
   /* Pro Max Color Palette - Deep OLED + Taiwan Vibe */
   --bg: #000000;
@@ -18,6 +16,10 @@
   --radius: 16px;
   --shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Typography Variables */
+  --font-body: 'Be Vietnam Pro', sans-serif;
+  --font-heading: 'Lexend', sans-serif;
 }
 
 * {
@@ -27,8 +29,14 @@
   -webkit-font-smoothing: antialiased;
 }
 
+html.fonts-loaded body {
+  visibility: visible;
+}
+
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg);
   background-image: 
     radial-gradient(at 0% 0%, hsla(217, 91%, 60%, 0.05) 0px, transparent 50%),
@@ -37,6 +45,7 @@ body {
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
+  line-height: 1.6;
 }
 
 .app-container {
@@ -62,9 +71,9 @@ body {
 
 /* Typography Pro Max */
 h1, h2, h3, .font-heading {
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-heading);
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
 }
 
 /* Custom Scrollbar */
@@ -99,7 +108,7 @@ h1, h2, h3, .font-heading {
   cursor: pointer;
   transition: var(--transition);
   border: 1px solid transparent;
-  font-family: 'Outfit', sans-serif;
+  font-family: var(--font-heading);
   white-space: nowrap;
 }
 
@@ -143,7 +152,8 @@ h1, h2, h3, .font-heading {
 .text-danger { color: var(--danger); }
 
 /* Form Elements */
-select, input {
+select, input, button, textarea {
+  font-family: inherit;
   background: hsla(0, 0%, 0%, 0.3);
   border: 1px solid var(--border);
   color: white;
@@ -156,4 +166,32 @@ select, input {
 select:focus, input:focus {
   border-color: var(--primary);
   background: hsla(0, 0%, 0%, 0.5);
+}
+
+/* Modal System */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 100;
+}
+
+.modal-panel {
+  width: 100%;
+  max-width: 500px;
+  background: var(--bg-sub);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  overflow-y: auto;
+  max-height: 90vh;
 }

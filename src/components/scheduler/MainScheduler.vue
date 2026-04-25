@@ -21,17 +21,43 @@ import {
   TrendingDown,
   LayoutGrid,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  User,
+  ArrowRight
 } from 'lucide-vue-next'
 import draggable from 'vuedraggable'
+import confetti from 'canvas-confetti'
 
 const store = useScheduleStore()
 const showSettings = ref(false)
-const activeDayIndex = ref(new Date().getDay() === 0 ? 6 : new Date().getDay() - 1)
-const mounted = ref(false)
+const showSetup = ref(false)
+const setupForm = ref({
+  name: store.userProfile.name === 'Kim' ? '' : store.userProfile.name,
+  expenses: store.monthlyExpenses,
+  rates: store.activityTypes.reduce((acc, t) => {
+    if (t.isWork) acc[t.id] = t.rate || 185
+    return acc
+  }, {})
+})
+
+const submitSetup = () => {
+  store.completeSetup({ name: setupForm.value.name || 'Kim' }, setupForm.value.expenses, setupForm.value.rates)
+  showSetup.value = false
+  confetti({
+    particleCount: 150,
+    spread: 70,
+    origin: { y: 0.6 }
+  })
+}
 
 onMounted(() => {
   mounted.value = true
+  // Force show if name is default or flag is missing
+  if (!store.hasSeenSetup || store.userProfile.name === 'Kim') {
+    setTimeout(() => {
+      showSetup.value = true
+    }, 500)
+  }
 })
 
 const getActivityType = (id) => {
@@ -220,6 +246,52 @@ const onAdd = (evt, newDate) => {
       </div>
     </div>
 
+    <!-- FIRST TIME SETUP MODAL -->
+    <Teleport to="body">
+      <div v-if="showSetup" class="modal-overlay setup-overlay">
+        <div class="glass-card setup-modal animate-pop">
+          <div class="setup-header">
+            <div class="setup-icon"><Sparkles :size="32" /></div>
+            <h2 class="font-heading">Chào mừng bạn!</h2>
+            <p class="text-muted">Hãy thiết lập nhanh để trợ lý phục vụ bạn tốt nhất nhé.</p>
+          </div>
+
+          <div class="setup-body">
+            <div class="setup-section">
+              <label><User :size="16" /> Tên của bạn</label>
+              <input v-model="setupForm.name" type="text" placeholder="Nhập tên của bạn...">
+            </div>
+
+            <div class="setup-section">
+              <label><CreditCard :size="16" /> Chi phí cố định (Tháng)</label>
+              <div class="input-with-unit">
+                <input v-model.number="setupForm.expenses" type="number">
+                <span class="unit-text">TWD</span>
+              </div>
+              <p class="hint">Tiền nhà, điện nước, bảo hiểm...</p>
+            </div>
+
+            <div class="setup-section">
+              <label><Wallet :size="16" /> Mức lương cơ bản (TWD/h)</label>
+              <div class="rates-grid">
+                <div v-for="type in store.activityTypes.filter(t => t.isWork)" :key="type.id" class="rate-item">
+                  <span class="icon">{{ type.icon }}</span>
+                  <span class="label">{{ type.name }}</span>
+                  <input v-model.number="setupForm.rates[type.id]" type="number">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="setup-footer">
+            <button class="btn btn-primary btn-full" @click="submitSetup">
+              Bắt đầu ngay <ArrowRight :size="18" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
     <!-- Settings Overlay -->
     <Teleport to="body">
       <div v-if="showSettings" class="modal-overlay" @click.self="showSettings = false">
@@ -288,7 +360,7 @@ const onAdd = (evt, newDate) => {
   width: 48px; height: 48px; background: var(--primary); border-radius: 14px;
   display: grid; place-items: center; box-shadow: 0 0 20px var(--primary-glow);
 }
-.user-avatar { font-weight: 900; font-size: 1.5rem; color: white; font-family: 'Outfit'; }
+.user-avatar { font-weight: 900; font-size: 1.5rem; color: white; font-family: var(--font-heading); }
 .user-meta h3 { font-size: 1.2rem; margin: 0; }
 .user-meta p { font-size: 0.75rem; display: flex; align-items: center; gap: 4px; margin-top: 2px; }
 
@@ -328,7 +400,7 @@ const onAdd = (evt, newDate) => {
 }
 .nav-tab.active { background: var(--primary); color: white; box-shadow: 0 4px 15px var(--primary-glow); }
 .day-abbr { font-size: 0.65rem; text-transform: uppercase; font-weight: 800; opacity: 0.7; }
-.day-num { font-size: 1.1rem; font-weight: 900; font-family: 'Outfit'; }
+.day-num { font-size: 1.1rem; font-weight: 900; font-family: var(--font-heading); }
 .holiday-indicator { position: absolute; top: 6px; right: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
 
 /* Grid Layout */
@@ -425,5 +497,31 @@ const onAdd = (evt, newDate) => {
   .user-info { gap: 0.75rem; }
   .user-meta h3 { font-size: 1rem; }
   .analytics-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* Setup Modal Specifics */
+.setup-overlay { z-index: 1000; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(20px); }
+.setup-modal { width: 100%; max-width: 480px; padding: 2.5rem; display: flex; flex-direction: column; gap: 2rem; border-color: rgba(255, 255, 255, 0.15); }
+.setup-header { text-align: center; }
+.setup-icon { width: 64px; height: 64px; background: var(--primary); border-radius: 20px; display: grid; place-items: center; margin: 0 auto 1.5rem; color: white; box-shadow: 0 8px 32px var(--primary-glow); }
+.setup-header h2 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+
+.setup-section { display: flex; flex-direction: column; gap: 0.75rem; }
+.setup-section label { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.9rem; color: var(--primary); }
+.setup-section input { width: 100%; padding: 1rem; font-size: 1.1rem; font-weight: 700; }
+.input-with-unit { position: relative; display: flex; align-items: center; }
+.input-with-unit span { position: absolute; right: 1rem; font-weight: 800; font-size: 0.75rem; opacity: 0.5; }
+
+.rates-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.rate-item { background: rgba(255, 255, 255, 0.03); padding: 1rem; border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
+.rate-item .label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); }
+.rate-item input { background: transparent; border: none; border-bottom: 1px solid var(--border); padding: 4px 0; text-align: center; font-size: 1.1rem; }
+
+.btn-full { width: 100%; padding: 1.25rem; font-size: 1.1rem; }
+
+.animate-pop { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.9) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
 }
 </style>

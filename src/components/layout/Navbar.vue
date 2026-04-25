@@ -143,6 +143,7 @@ const exportAsImage = async () => {
   font-size: 1.5rem;
   color: white;
   box-shadow: 0 4px 15px hsla(var(--primary-h), var(--primary-s), var(--primary-l), 0.3);
+  font-family: var(--font-heading);
 }
 
 h1 {

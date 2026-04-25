@@ -101,7 +101,7 @@ import { Facebook, ExternalLink, Heart } from 'lucide-vue-next'
 }
 
 .copyright {
-  font-family: monospace;
+  font-family: var(--font-body);
 }
 
 @media (max-width: 600px) {
