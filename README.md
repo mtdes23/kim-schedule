@@ -1,26 +1,43 @@
-# Kim's Schedule 📅
+# Kim's Student Planner 🇹🇼🎓
 
-**Kim's Schedule** là một ứng dụng quản lý lịch làm việc thông minh, thẩm mỹ và hiệu quả, được thiết kế để tối ưu hóa việc phân chia ca làm và quản lý nhân sự.
+Ứng dụng quản lý lịch học, lịch làm và tài chính cá nhân dành riêng cho du học sinh tại Đài Loan. 
 
 ## ✨ Tính năng nổi bật
-- **Giao diện Premium:** Thiết kế theo phong cách Glassmorphism sang trọng, hỗ trợ Dark Mode.
-- **Quản lý Ca làm linh hoạt:** Hỗ trợ các ca làm phổ biến (Ca 1, Ca 2, Ca 3, Ca Full) và ca nghỉ.
-- **Kiểm soát giờ làm:** Tự động tính toán tổng giờ làm trong tuần và cảnh báo khi vượt quá 48h/tuần hoặc 10h/ngày.
-- **Xuất bản lịch:** Tính năng xuất bảng lịch thành hình ảnh chất lượng cao để dễ dàng gửi qua Zalo/Facebook.
-- **Lưu trữ Offline:** Dữ liệu được lưu trữ trực tiếp trên trình duyệt (LocalStorage), không lo mất dữ liệu khi tải lại trang.
+- **OLED Pro Max UI:** Giao diện tối ưu cho màn hình OLED, hỗ trợ cả Mobile và Desktop.
+- **Onboarding Wizard:** Thiết lập cá nhân hóa (tên, mức lương, chi phí) ngay từ lần đầu sử dụng.
+- **Taiwan Insights:** Tự động quy đổi thu nhập sang các món ăn phổ biến tại Đài Loan (Trà sữa, Bento, Mì bò).
+- **Semester Logic:** Chế độ học kỳ (max 20h/tuần) và kỳ nghỉ (max 48h/tuần).
+- **Export & Share:** Xuất lịch trình dạng ảnh chất lượng cao để chia sẻ hoặc lưu trữ.
 
-## 🛠 Công nghệ sử dụng
-- **Vue 3 + Vite:** Đảm bảo tốc độ và hiệu suất cao.
-- **Pinia:** Quản lý trạng thái ứng dụng đồng nhất.
-- **Lucide Icons:** Hệ thống icon hiện đại, tinh tế.
-- **Date-fns:** Xử lý thời gian chính xác theo tiêu chuẩn quốc tế.
-- **HTML2Canvas:** Hỗ trợ xuất ảnh chất lượng cao.
+## 🚀 Công nghệ sử dụng
+- **Core:** Vue 3 (Composition API), Vite
+- **State:** Pinia
+- **Styling:** Vanilla CSS (Glassmorphism, Modern Typography)
+- **Icons:** Lucide Vue Next
+- **Fonts:** Be Vietnam Pro & Lexend (Optimized for Vietnamese)
 
-## 👤 Thông tin tác giả
-- **Tên ứng dụng:** Kim's Schedule
-- **Thiết kế bởi:** mtdes23
-- **Website:** [www.mtdes23.id.vn](http://www.mtdes23.id.vn)
-- **Facebook:** [mtdes233](https://www.facebook.com/mtdes233/)
+## 📦 Triển khai (Deployment)
 
----
-Designed by **mtdes23**
+### Triển khai lên Vercel
+Ứng dụng đã được cấu hình sẵn cho Vercel. Bạn chỉ cần:
+1. Đẩy code lên GitHub.
+2. Kết nối Repository với Vercel.
+3. Vercel sẽ tự động build và deploy.
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/mtdes23/kim-schedule)
+
+## 🛠 Cài đặt cục bộ (Local Development)
+```bash
+# Cài đặt dependencies
+npm install
+
+# Chạy dev server
+npm run dev
+
+# Build sản phẩm
+npm run build
+```
+
+## 📄 License
+Designed and Developed by **mtdes23**.
+Website: [www.mtdes23.id.vn](http://www.mtdes23.id.vn)

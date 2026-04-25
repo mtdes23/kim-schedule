@@ -255,14 +255,18 @@ export const useScheduleStore = defineStore('schedule', {
       this.currentWeekStart = startOfWeek(date, { weekStartsOn: 1 })
     },
 
-    completeSetup(profile, expenses, rates) {
+    completeSetup(profile, expenses, activities) {
       this.userProfile = { ...this.userProfile, ...profile }
       this.monthlyExpenses = Number(expenses) || 0
       
-      // Update rates for work activities
-      Object.keys(rates).forEach(id => {
-        this.updateActivityType(id, { rate: Number(rates[id]) })
-      })
+      // Update all activity types
+      if (activities && Array.isArray(activities)) {
+        this.activityTypes = activities.map(a => ({
+          ...a,
+          rate: Number(a.rate) || 0
+        }))
+        localStorage.setItem('kim-activity-types', JSON.stringify(this.activityTypes))
+      }
 
       this.hasSeenSetup = true
       localStorage.setItem('kim-user-profile', JSON.stringify(this.userProfile))

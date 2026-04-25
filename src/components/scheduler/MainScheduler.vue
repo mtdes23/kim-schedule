@@ -31,17 +31,15 @@ import confetti from 'canvas-confetti'
 const store = useScheduleStore()
 const showSettings = ref(false)
 const showSetup = ref(false)
+const setupStep = ref(1)
 const setupForm = ref({
   name: store.userProfile.name === 'Kim' ? '' : store.userProfile.name,
   expenses: store.monthlyExpenses,
-  rates: store.activityTypes.reduce((acc, t) => {
-    if (t.isWork) acc[t.id] = t.rate || 185
-    return acc
-  }, {})
+  activities: JSON.parse(JSON.stringify(store.activityTypes))
 })
 
 const submitSetup = () => {
-  store.completeSetup({ name: setupForm.value.name || 'Kim' }, setupForm.value.expenses, setupForm.value.rates)
+  store.completeSetup({ name: setupForm.value.name || 'Kim' }, setupForm.value.expenses, setupForm.value.activities)
   showSetup.value = false
   confetti({
     particleCount: 150,
@@ -246,48 +244,76 @@ const onAdd = (evt, newDate) => {
       </div>
     </div>
 
-    <!-- FIRST TIME SETUP MODAL -->
     <Teleport to="body">
       <div v-if="showSetup" class="modal-overlay setup-overlay">
         <div class="glass-card setup-modal animate-pop">
-          <div class="setup-header">
-            <div class="setup-icon"><Sparkles :size="32" /></div>
-            <h2 class="font-heading">Chào mừng bạn!</h2>
-            <p class="text-muted">Hãy thiết lập nhanh để trợ lý phục vụ bạn tốt nhất nhé.</p>
+          
+          <div class="setup-progress">
+            <div class="progress-segment" :class="{ 'active': setupStep >= 1 }"></div>
+            <div class="progress-segment" :class="{ 'active': setupStep >= 2 }"></div>
           </div>
 
-          <div class="setup-body">
-            <div class="setup-section">
-              <label><User :size="16" /> Tên của bạn</label>
-              <input v-model="setupForm.name" type="text" placeholder="Nhập tên của bạn...">
+          <div v-if="setupStep === 1" class="setup-step animate-fade">
+            <div class="setup-header">
+              <div class="setup-icon"><User :size="32" /></div>
+              <h2 class="font-heading">Chào mừng bạn!</h2>
+              <p class="text-muted">Bắt đầu bằng việc cho mình biết tên và chi phí của bạn.</p>
             </div>
 
-            <div class="setup-section">
-              <label><CreditCard :size="16" /> Chi phí cố định (Tháng)</label>
-              <div class="input-with-unit">
-                <input v-model.number="setupForm.expenses" type="number">
-                <span class="unit-text">TWD</span>
+            <div class="setup-body">
+              <div class="setup-section">
+                <label><User :size="16" /> Tên của bạn</label>
+                <input v-model="setupForm.name" type="text" placeholder="Nhập tên của bạn...">
               </div>
-              <p class="hint">Tiền nhà, điện nước, bảo hiểm...</p>
+
+              <div class="setup-section">
+                <label><CreditCard :size="16" /> Chi phí cố định (Tháng)</label>
+                <div class="input-with-unit">
+                  <input v-model.number="setupForm.expenses" type="number">
+                  <span class="unit-text">TWD</span>
+                </div>
+                <p class="hint">Tiền nhà, điện nước, bảo hiểm...</p>
+              </div>
             </div>
 
-            <div class="setup-section">
-              <label><Wallet :size="16" /> Mức lương cơ bản (TWD/h)</label>
-              <div class="rates-grid">
-                <div v-for="type in store.activityTypes.filter(t => t.isWork)" :key="type.id" class="rate-item">
-                  <span class="icon">{{ type.icon }}</span>
-                  <span class="label">{{ type.name }}</span>
-                  <input v-model.number="setupForm.rates[type.id]" type="number">
+            <div class="setup-footer">
+              <button class="btn btn-primary btn-full" @click="setupStep = 2">
+                Tiếp theo <ArrowRight :size="18" />
+              </button>
+            </div>
+          </div>
+
+          <div v-if="setupStep === 2" class="setup-step animate-fade">
+            <div class="setup-header">
+              <div class="setup-icon"><Sparkles :size="32" /></div>
+              <h2 class="font-heading">Công việc & Học tập</h2>
+              <p class="text-muted">Tùy chỉnh tên và mức lương cho các hoạt động của bạn.</p>
+            </div>
+
+            <div class="setup-body scrollable">
+              <div class="activity-edit-list">
+                <div v-for="act in setupForm.activities" :key="act.id" class="activity-edit-card">
+                  <div class="card-top">
+                    <span class="icon">{{ act.icon }}</span>
+                    <input v-model="act.name" type="text" class="act-name-input">
+                  </div>
+                  <div v-if="act.isWork" class="card-rate">
+                    <Wallet :size="14" />
+                    <input v-model.number="act.rate" type="number">
+                    <span class="unit">TWD/h</span>
+                  </div>
                 </div>
               </div>
             </div>
+
+            <div class="setup-footer dual">
+              <button class="btn btn-ghost" @click="setupStep = 1">Quay lại</button>
+              <button class="btn btn-primary flex-1" @click="submitSetup">
+                Hoàn tất <ArrowRight :size="18" />
+              </button>
+            </div>
           </div>
 
-          <div class="setup-footer">
-            <button class="btn btn-primary btn-full" @click="submitSetup">
-              Bắt đầu ngay <ArrowRight :size="18" />
-            </button>
-          </div>
         </div>
       </div>
     </Teleport>
@@ -507,17 +533,26 @@ const onAdd = (evt, newDate) => {
 .setup-header h2 { font-size: 1.75rem; margin-bottom: 0.5rem; }
 
 .setup-section { display: flex; flex-direction: column; gap: 0.75rem; }
-.setup-section label { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.9rem; color: var(--primary); }
-.setup-section input { width: 100%; padding: 1rem; font-size: 1.1rem; font-weight: 700; }
+.setup-section input { width: 100%; padding: 1rem; font-size: 1.1rem; font-weight: 700; border-radius: 14px; }
 .input-with-unit { position: relative; display: flex; align-items: center; }
-.input-with-unit span { position: absolute; right: 1rem; font-weight: 800; font-size: 0.75rem; opacity: 0.5; }
+.input-with-unit .unit-text { position: absolute; right: 1rem; font-weight: 800; font-size: 0.75rem; opacity: 0.5; }
 
-.rates-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-.rate-item { background: rgba(255, 255, 255, 0.03); padding: 1rem; border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
-.rate-item .label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); }
-.rate-item input { background: transparent; border: none; border-bottom: 1px solid var(--border); padding: 4px 0; text-align: center; font-size: 1.1rem; }
+.setup-progress { display: flex; gap: 8px; margin-bottom: 2rem; }
+.progress-segment { flex: 1; height: 4px; background: rgba(255,255,255,0.05); border-radius: 2px; transition: 0.3s; }
+.progress-segment.active { background: var(--primary); box-shadow: 0 0 10px var(--primary-glow); }
 
-.btn-full { width: 100%; padding: 1.25rem; font-size: 1.1rem; }
+.setup-body.scrollable { max-height: 400px; overflow-y: auto; padding-right: 10px; margin: -10px; padding: 10px; }
+.activity-edit-list { display: flex; flex-direction: column; gap: 1rem; }
+.activity-edit-card { background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 18px; border: 1px solid var(--border); transition: 0.2s; }
+.activity-edit-card:focus-within { border-color: var(--primary); background: rgba(255,255,255,0.05); }
+.card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.card-top .icon { font-size: 1.5rem; width: 40px; height: 40px; background: rgba(0,0,0,0.2); border-radius: 10px; display: grid; place-items: center; }
+.act-name-input { flex: 1; background: transparent; border: none; font-size: 1.1rem; font-weight: 700; color: white; padding: 0; }
+.card-rate { display: flex; align-items: center; gap: 8px; padding-left: 52px; color: var(--text-muted); font-size: 0.8rem; }
+.card-rate input { width: 80px; background: rgba(0,0,0,0.2); border: none; padding: 4px 8px; border-radius: 6px; text-align: center; font-weight: 800; color: var(--accent); }
+
+.setup-footer.dual { display: flex; gap: 1rem; }
+.flex-1 { flex: 1; }
 
 .animate-pop { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 @keyframes popIn {
