@@ -34,7 +34,6 @@ const showSetup = ref(false)
 const setupStep = ref(1)
 const setupForm = ref({
   name: store.userProfile.name === 'Kim' ? '' : store.userProfile.name,
-  expenses: store.monthlyExpenses,
   activities: JSON.parse(JSON.stringify(store.activityTypes))
 })
 
@@ -55,7 +54,7 @@ const removeSetupActivity = (id) => {
 }
 
 const submitSetup = () => {
-  store.completeSetup({ name: setupForm.value.name || 'Kim' }, setupForm.value.expenses, setupForm.value.activities)
+  store.completeSetup({ name: setupForm.value.name || 'Kim' }, setupForm.value.activities)
   showSetup.value = false
   confetti({
     particleCount: 150,
@@ -230,9 +229,6 @@ const onAdd = (evt, newDate) => {
             <PieChart :size="18" />
             <span class="font-heading">Phân tích tuần này</span>
           </div>
-          <div v-if="store.remainingSalary > 0" class="net-income-label">
-            Lương còn dư: <span class="value">{{ Math.round(store.remainingSalary).toLocaleString() }} TWD</span>
-          </div>
         </div>
 
         <!-- Mobile Day Selector (New) -->
@@ -289,13 +285,10 @@ const onAdd = (evt, newDate) => {
                 <input v-model="setupForm.name" type="text" placeholder="Nhập tên của bạn...">
               </div>
 
+            <div class="setup-body">
               <div class="setup-section">
-                <label><CreditCard :size="16" /> Chi phí cố định (Tháng)</label>
-                <div class="input-with-unit">
-                  <input v-model.number="setupForm.expenses" type="number">
-                  <span class="unit-text">TWD</span>
-                </div>
-                <p class="hint">Tiền nhà, điện nước, bảo hiểm...</p>
+                <label><User :size="16" /> Tên của bạn</label>
+                <input v-model="setupForm.name" type="text" placeholder="Ví dụ: Kim">
               </div>
             </div>
 
@@ -363,20 +356,6 @@ const onAdd = (evt, newDate) => {
           </div>
 
           <div class="panel-body">
-            <!-- Expenses -->
-            <div class="panel-section">
-              <label class="font-heading"><CreditCard :size="16" /> Chi phí cố định</label>
-              <div class="input-glow-group">
-                <input 
-                  type="number" 
-                  :value="store.monthlyExpenses" 
-                  @input="store.updateMonthlyExpenses(Number($event.target.value))"
-                  placeholder="Tiền nhà, bảo hiểm..."
-                >
-                <span class="suffix">TWD/Tháng</span>
-              </div>
-            </div>
-
             <!-- Activity Configuration -->
             <div class="panel-section">
               <div class="section-header-row">
@@ -648,14 +627,33 @@ const onAdd = (evt, newDate) => {
   }
   .day-pane.active { display: flex; }
   .pane-header { display: none; } /* Hide in mobile because of top nav */
+
+  /* Compact Tiles for Mobile */
+  .activity-tile { 
+    padding: 0.75rem; 
+    border-radius: 12px;
+  }
+  .tile-header { margin-bottom: 0.5rem; }
+  .type-badge { width: 24px; height: 24px; font-size: 0.85rem; }
+  .tile-select { font-size: 0.8rem; }
+  .tile-time { margin-bottom: 0.35rem; padding: 4px; border-radius: 8px; }
+  .tile-time input { font-size: 0.75rem; width: 50px; }
+  .tile-note { padding: 4px; border-radius: 6px; }
+  .tile-note input { font-size: 0.65rem; }
+
+  .analytics-footer { padding: 1rem; }
+  .analytics-grid { grid-template-columns: 1fr; gap: 0.75rem; }
 }
 
 @media (max-width: 768px) {
   .quick-stats { gap: 0.5rem; }
   .milestones-track { display: none; }
-  .user-info { gap: 0.75rem; }
-  .user-meta h3 { font-size: 1rem; }
-  .analytics-grid { grid-template-columns: 1fr 1fr; }
+  .user-info { gap: 0.5rem; }
+  .user-meta h3 { font-size: 0.9rem; }
+  .pill span { font-size: 0.7rem; }
+  .pill .unit { display: none; }
+  .analytics-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .net-income-label { width: 100%; text-align: center; font-size: 0.75rem; }
 }
 
 /* Setup Modal Specifics */

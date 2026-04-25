@@ -19,8 +19,6 @@ export const useScheduleStore = defineStore('schedule', {
     return {
       userProfile: JSON.parse(localStorage.getItem('kim-user-profile')) || { name: 'Kim', position: 'Personal' },
       hasSeenSetup: JSON.parse(localStorage.getItem('kim-has-seen-setup')) || false,
-      isSemesterMode: JSON.parse(localStorage.getItem('kim-semester-mode')) ?? true,
-      monthlyExpenses: JSON.parse(localStorage.getItem('kim-monthly-expenses')) || 0,
       foodPrices: { tea: 60, bento: 100, noodle: 180 },
       activityTypes,
       assignments: JSON.parse(localStorage.getItem('kim-range-assignments')) || [],
@@ -39,7 +37,7 @@ export const useScheduleStore = defineStore('schedule', {
     },
 
     workLimit: (state) => {
-      return state.isSemesterMode ? 20 : 48
+      return 48
     },
 
     calculateWeeklyWorkHours: (state) => {
@@ -124,9 +122,7 @@ export const useScheduleStore = defineStore('schedule', {
     },
 
     remainingSalary: (state) => {
-      const salary = state.estimatedSalary || 0
-      const expenses = state.monthlyExpenses || 0
-      return salary - (expenses / 4)
+      return state.estimatedSalary || 0
     },
 
     foodComparison: (state) => {
@@ -164,23 +160,7 @@ export const useScheduleStore = defineStore('schedule', {
       localStorage.setItem('kim-holidays', JSON.stringify(this.holidays))
     },
 
-    updateMonthlyExpenses(amount) {
-      this.monthlyExpenses = Number(amount) || 0
-      localStorage.setItem('kim-monthly-expenses', JSON.stringify(this.monthlyExpenses))
-    },
-
-    toggleSemesterMode() {
-      this.isSemesterMode = !this.isSemesterMode
-      localStorage.setItem('kim-semester-mode', JSON.stringify(this.isSemesterMode))
-    },
-
     updateActivityType(id, updates) {
-      const index = this.activityTypes.findIndex(t => t.id === id)
-      if (index > -1) {
-        this.activityTypes[index] = { ...this.activityTypes[index], ...updates }
-        localStorage.setItem('kim-activity-types', JSON.stringify(this.activityTypes))
-      }
-    },
 
     addActivityType(isWork = true) {
       const newId = 'act-' + Math.random().toString(36).substr(2, 5)
@@ -281,9 +261,8 @@ export const useScheduleStore = defineStore('schedule', {
       this.currentWeekStart = startOfWeek(date, { weekStartsOn: 1 })
     },
 
-    completeSetup(profile, expenses, activities) {
+    completeSetup(profile, activities) {
       this.userProfile = { ...this.userProfile, ...profile }
-      this.monthlyExpenses = Number(expenses) || 0
       
       // Update all activity types
       if (activities && Array.isArray(activities)) {
@@ -296,7 +275,6 @@ export const useScheduleStore = defineStore('schedule', {
 
       this.hasSeenSetup = true
       localStorage.setItem('kim-user-profile', JSON.stringify(this.userProfile))
-      localStorage.setItem('kim-monthly-expenses', JSON.stringify(this.monthlyExpenses))
       localStorage.setItem('kim-has-seen-setup', JSON.stringify(true))
     }
   }
