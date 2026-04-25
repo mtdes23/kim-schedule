@@ -147,7 +147,7 @@ const handleLogout = () => {
             <Settings :size="20" />
           </button>
           
-          <button class="btn-icon-round btn-logout" @click="handleLogout" title="Đăng xuất & Xóa dữ liệu">
+          <button class="btn-icon-round btn-logout-header" @click="handleLogout" title="Đăng xuất & Xóa dữ liệu">
             <LogOut :size="20" />
           </button>
         </div>
@@ -379,7 +379,12 @@ const handleLogout = () => {
             </div>
           </div>
           
-          <button class="btn btn-primary w-full" @click="showSettings = false">Lưu thay đổi</button>
+          <div class="panel-footer">
+            <button class="btn btn-primary w-full" @click="showSettings = false">Lưu thay đổi</button>
+            <button class="btn btn-danger-outline w-full logout-panel-btn" @click="handleLogout">
+              <LogOut :size="16" /> Đăng xuất & Xóa dữ liệu
+            </button>
+          </div>
         </div>
       </div>
     </Teleport>
@@ -428,7 +433,8 @@ const handleLogout = () => {
   cursor: pointer; transition: var(--transition);
 }
 .btn-icon-round:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--text-muted); transform: rotate(45deg); }
-.btn-logout:hover { background: rgba(239, 68, 68, 0.15); border-color: var(--danger); color: var(--danger); transform: translateX(3px) rotate(0deg) !important; }
+.btn-logout-header { color: #ef4444; border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05); }
+.btn-logout-header:hover { background: rgba(239, 68, 68, 0.2) !important; border-color: var(--danger) !important; color: white !important; transform: translateX(3px) rotate(0deg) !important; }
 
 /* Day Tabs Pro Max */
 .day-navigation {
@@ -562,6 +568,13 @@ const handleLogout = () => {
 .name-edit { flex: 1; background: transparent; border: none; border-bottom: 1px solid var(--border); color: white; font-weight: 600; padding: 2px 0; }
 .color-edit { width: 30px; height: 30px; border: none; background: transparent; cursor: pointer; }
 .rate-edit { width: 80px; background: rgba(0,0,0,0.3); border: none; color: white; font-weight: 800; padding: 4px; border-radius: 6px; text-align: center; }
+
+.panel-footer { display: flex; flex-direction: column; gap: 0.75rem; }
+.btn-danger-outline { 
+  background: transparent; border: 1px solid rgba(239, 68, 68, 0.3); color: var(--danger); 
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-danger-outline:hover { background: rgba(239, 68, 68, 0.1); border-color: var(--danger); }
 
 /* Mobile Adaptations */
 .mobile-day-nav { display: none; }
