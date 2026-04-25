@@ -23,7 +23,8 @@ import {
   ChevronRight,
   Sparkles,
   User,
-  ArrowRight
+  ArrowRight,
+  LogOut
 } from 'lucide-vue-next'
 import draggable from 'vuedraggable'
 import confetti from 'canvas-confetti'
@@ -96,6 +97,13 @@ const onAdd = (evt, newDate) => {
   const item = evt.item.__draggable_context.element
   store.moveAssignment(item.id, newDate)
 }
+
+const handleLogout = () => {
+  if (confirm('BẠN CÓ CHẮC CHẮN? Toàn bộ lịch trình và thiết lập cá nhân sẽ bị xóa vĩnh viễn.')) {
+    localStorage.clear()
+    window.location.reload()
+  }
+}
 </script>
 
 <template>
@@ -137,6 +145,10 @@ const onAdd = (evt, newDate) => {
           
           <button class="btn-icon-round" @click="showSettings = true" title="Thiết lập">
             <Settings :size="20" />
+          </button>
+          
+          <button class="btn-icon-round btn-logout" @click="handleLogout" title="Đăng xuất & Xóa dữ liệu">
+            <LogOut :size="20" />
           </button>
         </div>
       </div>
@@ -416,6 +428,7 @@ const onAdd = (evt, newDate) => {
   cursor: pointer; transition: var(--transition);
 }
 .btn-icon-round:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--text-muted); transform: rotate(45deg); }
+.btn-logout:hover { background: rgba(239, 68, 68, 0.15); border-color: var(--danger); color: var(--danger); transform: translateX(3px) rotate(0deg) !important; }
 
 /* Day Tabs Pro Max */
 .day-navigation {
