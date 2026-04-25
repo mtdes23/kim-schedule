@@ -144,22 +144,13 @@ const onAdd = (evt, newDate) => {
           v-for="(day, index) in store.weekDays" 
           :key="day.toString()" 
           class="day-pane"
-          :class="{ 'active': activeDayIndex === index, 'holiday-theme': store.isDayHoliday(day) }"
+          :class="{ 'active': activeDayIndex === index }"
         >
           <div class="pane-header">
             <div class="date-info">
               <h2 class="font-heading">{{ format(day, 'EEEE', { locale: vi }) }}</h2>
               <span class="date-sub">{{ format(day, 'dd MMMM, yyyy', { locale: vi }) }}</span>
             </div>
-            
-            <button 
-              class="holiday-toggle-btn" 
-              :class="{ 'is-active': store.isDayHoliday(day) }"
-              @click="store.toggleHoliday(day)"
-            >
-              <Gift :size="16" />
-              <span>{{ store.isDayHoliday(day) ? 'Lễ x2 Đang Bật' : 'Đánh dấu Ngày Lễ' }}</span>
-            </button>
           </div>
 
           <draggable 
@@ -549,8 +540,16 @@ const onAdd = (evt, newDate) => {
 /* Mobile Adaptations */
 @media (max-width: 1024px) {
   .dashboard-header { padding: 1rem; }
-  .grid-content { grid-template-columns: 1fr; }
-  .day-pane { display: none; }
+  .grid-content { 
+    display: block; 
+    padding: 0.5rem;
+    overflow-x: hidden;
+  }
+  .day-pane { 
+    width: 100%; 
+    min-width: 100%;
+    display: none; 
+  }
   .day-pane.active { display: flex; }
 }
 
