@@ -141,20 +141,6 @@ const onAdd = (evt, newDate) => {
         </div>
       </div>
 
-      <!-- Mobile Navigation Tabs -->
-      <div class="day-navigation">
-        <button 
-          v-for="(day, index) in store.weekDays" 
-          :key="index"
-          class="nav-tab"
-          :class="{ 'active': activeDayIndex === index, 'holiday': store.isDayHoliday(day) }"
-          @click="activeDayIndex = index"
-        >
-          <span class="day-abbr">{{ format(day, 'EEE', { locale: vi }) }}</span>
-          <span class="day-num">{{ format(day, 'dd') }}</span>
-          <div v-if="store.isDayHoliday(day)" class="holiday-indicator"></div>
-        </button>
-      </div>
 
       <!-- Grid Content Area -->
       <div class="grid-content">
@@ -231,19 +217,22 @@ const onAdd = (evt, newDate) => {
           </div>
         </div>
 
-        <!-- Mobile Day Selector (New) -->
-        <div class="mobile-day-nav">
-          <button 
-            v-for="(day, index) in store.weekDays" 
-            :key="index"
-            class="day-nav-item"
-            :class="{ 'active': activeDayIndex === index }"
-            @click="activeDayIndex = index"
-          >
-            <span class="day-short">{{ format(day, 'EEEEEE', { locale: vi }) }}</span>
-            <span class="day-num">{{ format(day, 'dd') }}</span>
-          </button>
-        </div>
+      </div>
+
+      <!-- Unified Day Selector -->
+      <div class="mobile-day-nav">
+        <button 
+          v-for="(day, index) in store.weekDays" 
+          :key="index"
+          class="day-nav-item"
+          :class="{ 'active': activeDayIndex === index, 'holiday': store.isDayHoliday(day) }"
+          @click="activeDayIndex = index"
+        >
+          <span class="day-short">{{ format(day, 'EEE', { locale: vi }) }}</span>
+          <span class="day-num">{{ format(day, 'dd') }}</span>
+          <div v-if="store.isDayHoliday(day)" class="holiday-dot"></div>
+        </button>
+      </div>
 
         <div class="analytics-grid">
           <div v-for="type in store.activityBreakdown" :key="type.id" class="analytic-item">
@@ -276,14 +265,8 @@ const onAdd = (evt, newDate) => {
             <div class="setup-header">
               <div class="setup-icon"><User :size="32" /></div>
               <h2 class="font-heading">Chào mừng bạn!</h2>
-              <p class="text-muted">Bắt đầu bằng việc cho mình biết tên và chi phí của bạn.</p>
+              <p class="text-muted">Bắt đầu bằng việc cho mình biết tên của bạn.</p>
             </div>
-
-            <div class="setup-body">
-              <div class="setup-section">
-                <label><User :size="16" /> Tên của bạn</label>
-                <input v-model="setupForm.name" type="text" placeholder="Nhập tên của bạn...">
-              </div>
 
             <div class="setup-body">
               <div class="setup-section">
@@ -626,7 +609,9 @@ const onAdd = (evt, newDate) => {
     background: transparent;
   }
   .day-pane.active { display: flex; }
-  .pane-header { display: none; } /* Hide in mobile because of top nav */
+  .pane-header { display: none; }
+  
+  .holiday-dot { position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 5px var(--accent); }
 
   /* Compact Tiles for Mobile */
   .activity-tile { 
