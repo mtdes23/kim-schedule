@@ -420,43 +420,49 @@ const handleLogout = () => {
 /* Header Pro Max */
 .dashboard-header {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 1.5rem 2rem; background: rgba(20, 20, 25, 0.6); border-bottom: 1px solid var(--border);
+  padding: 2.5rem; background: rgba(10, 10, 15, 0.4); border-bottom: 1px solid var(--border);
 }
 
-.user-info { display: flex; align-items: center; gap: 1.25rem; }
+.user-info { display: flex; align-items: center; gap: 1.5rem; }
 .avatar-glow {
-  width: 48px; height: 48px; background: var(--primary); border-radius: 14px;
-  display: grid; place-items: center; box-shadow: 0 0 20px var(--primary-glow);
+  width: 56px; height: 56px; background: var(--magic); border-radius: 18px;
+  display: grid; place-items: center; box-shadow: 0 0 30px var(--primary-glow);
+  position: relative;
 }
-.user-avatar { font-weight: 900; font-size: 1.5rem; color: white; font-family: var(--font-heading); }
-.user-meta h3 { font-size: 1.2rem; margin: 0; }
-.user-meta p { font-size: 0.75rem; display: flex; align-items: center; gap: 4px; margin-top: 2px; }
+.avatar-glow::before {
+  content: ''; position: absolute; inset: -4px; background: var(--magic); 
+  border-radius: 20px; filter: blur(12px); opacity: 0.3;
+}
+.user-avatar { font-size: 1.5rem; font-weight: 900; color: white; position: relative; z-index: 1; }
+.user-meta h3 { font-size: 1.4rem; margin-bottom: 2px; }
+.user-meta p { font-size: 0.8rem; font-weight: 600; opacity: 0.6; display: flex; align-items: center; gap: 6px; }
 
 .quick-stats { display: flex; align-items: center; gap: 1.5rem; }
 .milestones-track { display: flex; gap: 1rem; padding-right: 1.5rem; border-right: 1px solid var(--border); }
 .milestone { display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 1.1rem; }
 .milestone .count { font-size: 0.8rem; opacity: 0.8; }
 
-.stat-pills { display: flex; gap: 0.75rem; }
-.pill {
-  display: flex; align-items: center; gap: 6px; padding: 0.5rem 0.8rem;
-  background: rgba(255, 255, 255, 0.05); border-radius: 12px; border: 1px solid var(--border);
-  font-weight: 700; font-size: 0.85rem; transition: var(--transition);
+.stat-pills { display: flex; gap: 8px; }
+.pill { 
+  display: flex; align-items: center; gap: 6px; padding: 0.6rem 1rem; 
+  background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border); border-radius: 12px;
+  font-weight: 700; font-size: 0.85rem; transition: 0.3s;
 }
+.pill:hover { border-color: var(--border-bright); background: rgba(255, 255, 255, 0.08); }
 .pill.study { color: var(--primary); border-color: rgba(59, 130, 246, 0.2); }
 .pill.work { color: var(--accent); border-color: rgba(245, 158, 11, 0.2); }
 .pill.work.over { color: var(--danger); border-color: rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.1); }
-.pill.salary { color: var(--secondary); border-color: rgba(16, 185, 129, 0.2); }
-.pill.salary .unit { font-size: 0.65rem; opacity: 0.7; margin-left: 2px; }
+.pill.salary { background: rgba(16, 185, 129, 0.1); color: var(--secondary); border-color: rgba(16, 185, 129, 0.2); }
+.pill.salary .unit { font-size: 0.6rem; opacity: 0.6; margin-left: 2px; }
 
 .btn-icon-round {
-  width: 42px; height: 42px; border-radius: 50%; background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border); color: var(--text); display: grid; place-items: center;
+  width: 44px; height: 44px; border-radius: 14px; border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.05); color: white; display: grid; place-items: center;
   cursor: pointer; transition: var(--transition);
 }
-.btn-icon-round:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--text-muted); transform: rotate(45deg); }
+.btn-icon-round:hover { background: rgba(255, 255, 255, 0.1); border-color: var(--border-bright); transform: rotate(45deg); }
 .btn-logout-header { color: #ef4444; border-color: rgba(239, 68, 68, 0.2); background: rgba(239, 68, 68, 0.05); }
-.btn-logout-header:hover { background: rgba(239, 68, 68, 0.2) !important; border-color: var(--danger) !important; color: white !important; transform: translateX(3px) rotate(0deg) !important; }
+.btn-logout-header:hover { background: var(--danger) !important; border-color: var(--danger) !important; color: white !important; transform: translateX(3px) rotate(0deg) !important; }
 
 /* Day Tabs Pro Max */
 .day-navigation {
@@ -473,62 +479,49 @@ const handleLogout = () => {
 .day-num { font-size: 1.1rem; font-weight: 900; font-family: var(--font-heading); }
 .holiday-indicator { position: absolute; top: 6px; right: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
 
-/* Trello-style Grid Layout */
+/* Trello-style Grid Layout Pro Max */
 .grid-content { 
-  display: flex; 
-  gap: 1rem; 
-  padding: 1rem; 
-  overflow-x: auto; 
-  min-height: 600px;
-  background: var(--bg-sub);
-  scroll-behavior: smooth;
+  display: flex; gap: 2rem; padding: 2.5rem; 
+  overflow-x: auto; min-height: 750px;
+  background: var(--bg); scroll-behavior: smooth;
+  scrollbar-width: none;
 }
+.grid-content::-webkit-scrollbar { display: none; }
 
 .day-pane { 
-  min-width: 320px;
-  width: 320px;
-  background: rgba(255, 255, 255, 0.04);
-  border-radius: 16px;
-  display: flex; 
-  flex-direction: column;
-  border: 1px solid var(--border);
-  height: fit-content;
-  max-height: 100%;
+  min-width: 320px; width: 320px; 
+  background: var(--surface); backdrop-filter: blur(20px);
+  border-radius: 28px; display: flex; flex-direction: column;
+  border: 1px solid var(--border); transition: var(--transition);
+  height: fit-content; max-height: 100%; overflow: hidden;
 }
+.day-pane:hover { border-color: var(--border-bright); background: var(--glass-hover); }
 
 .pane-header { 
-  padding: 1.25rem 1rem; 
-  border-bottom: 1px solid var(--border); 
+  padding: 1.5rem; border-bottom: 1px solid var(--border); 
   background: rgba(255, 255, 255, 0.02);
-  border-radius: 16px 16px 0 0;
 }
-.date-info h2 { font-size: 1rem; margin: 0; font-family: var(--font-heading); color: white; }
-.date-sub { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+.date-info h2 { font-size: 1.1rem; margin-bottom: 4px; font-family: var(--font-heading); color: white; font-weight: 800; }
+.date-sub { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
 
-/* Activity Tiles (Trello Cards) */
+/* Activity Tiles (Cards) Pro Max */
 .cards-container { 
-  padding: 0.75rem; 
-  display: flex; 
-  flex-direction: column; 
-  gap: 0.75rem; 
-  flex: 1;
-  min-height: 50px;
+  padding: 1rem; display: flex; flex-direction: column; 
+  gap: 1.25rem; flex: 1; min-height: 100px;
 }
 .activity-tile {
-  background: rgba(30, 30, 35, 0.8);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  padding: 1rem;
-  cursor: grab;
-  transition: var(--transition);
+  background: rgba(255, 255, 255, 0.04); border-radius: 20px;
+  border: 1px solid var(--border); padding: 1.25rem;
+  cursor: grab; transition: var(--transition);
   border-top: 4px solid var(--tile-color);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  position: relative; overflow: hidden;
 }
 .activity-tile:hover { 
-  transform: translateY(-2px);
-  background: rgba(45, 45, 50, 0.95);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  border-color: rgba(255,255,255,0.1);
+  transform: translateY(-4px) scale(1.02);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+  border-color: var(--tile-color);
 }
 .ghost-card {
   opacity: 0.4;
@@ -577,16 +570,30 @@ const handleLogout = () => {
 .food-icon { font-size: 1.1rem; }
 
 /* Analytics Footer */
-.analytics-footer { padding: 1.5rem 2rem; background: rgba(20, 20, 25, 0.8); border-top: 1px solid var(--border); }
-.analytics-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
-.analytics-header .title { display: flex; align-items: center; gap: 8px; color: var(--primary); }
-.net-income-label { font-size: 0.85rem; font-weight: 700; color: var(--secondary); background: rgba(16, 185, 129, 0.1); padding: 4px 12px; border-radius: 20px; }
+.analytics-footer { 
+  padding: 3rem; background: rgba(8, 8, 12, 0.85); 
+  border-top: 1px solid var(--border); backdrop-filter: blur(40px);
+}
+.analytics-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; }
+.analytics-header .title { display: flex; align-items: center; gap: 15px; }
+.analytics-header .title span { font-size: 1.75rem; letter-spacing: -0.05em; font-weight: 800; color: var(--primary); }
 
-.analytics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.5rem; }
-.item-head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.85rem; font-weight: 700; }
-.item-head .hours { margin-left: auto; color: var(--text-muted); font-size: 0.75rem; }
-.progress-bar-bg { height: 6px; background: rgba(255, 255, 255, 0.05); border-radius: 3px; overflow: hidden; }
-.progress-fill { height: 100%; border-radius: 3px; transition: width 1s ease-out; }
+.analytics-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem;
+}
+
+.ana-card {
+  background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border);
+  border-radius: 20px; padding: 1.5rem; transition: 0.3s cubic-bezier(0.2, 1, 0.3, 1);
+}
+.ana-card:hover { 
+  border-color: var(--border-bright); background: rgba(255, 255, 255, 0.06); 
+  transform: translateY(-5px); box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+}
+.ana-card .label { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); margin-bottom: 10px; display: block; text-transform: uppercase; letter-spacing: 0.08em; }
+.ana-card .value { font-size: 1.6rem; font-weight: 900; font-family: var(--font-heading); color: white; }
+.ana-card .bar-bg { height: 8px; background: rgba(255, 255, 255, 0.05); border-radius: 4px; margin-top: 15px; overflow: hidden; }
+.ana-card .bar-fill { height: 100%; background: var(--magic); transition: 1.5s cubic-bezier(0.2, 1, 0.3, 1); }
 
 /* Modal Panel */
 .modal-panel { width: 100%; max-width: 500px; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; }
