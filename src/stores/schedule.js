@@ -182,6 +182,32 @@ export const useScheduleStore = defineStore('schedule', {
       }
     },
 
+    addActivityType(isWork = true) {
+      const newId = 'act-' + Math.random().toString(36).substr(2, 5)
+      this.activityTypes.push({
+        id: newId,
+        name: isWork ? 'Công việc mới' : 'Hoạt động mới',
+        color: isWork ? '#10b981' : '#3b82f6',
+        isWork,
+        icon: isWork ? '💼' : '🎓',
+        rate: isWork ? 185 : 0
+      })
+      localStorage.setItem('kim-activity-types', JSON.stringify(this.activityTypes))
+    },
+
+    removeActivityType(id) {
+      if (this.activityTypes.length <= 1) {
+        alert('Cần có ít nhất một loại hoạt động.')
+        return
+      }
+      if (confirm('Xóa loại hoạt động này? Tất cả lịch trình liên quan sẽ bị xóa.')) {
+        this.activityTypes = this.activityTypes.filter(t => t.id !== id)
+        this.assignments = this.assignments.filter(a => a.activityId !== id)
+        localStorage.setItem('kim-activity-types', JSON.stringify(this.activityTypes))
+        this.saveToLocal()
+      }
+    },
+
     addAssignment(date, activityId = 'school') {
       this.assignments.push({
         id: Math.random().toString(36).substr(2, 9),

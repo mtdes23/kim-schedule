@@ -38,6 +38,22 @@ const setupForm = ref({
   activities: JSON.parse(JSON.stringify(store.activityTypes))
 })
 
+const addSetupActivity = (isWork = true) => {
+  setupForm.value.activities.push({
+    id: 'setup-' + Math.random().toString(36).substr(2, 5),
+    name: isWork ? 'Công việc mới' : 'Hoạt động mới',
+    color: isWork ? '#10b981' : '#3b82f6',
+    isWork,
+    icon: isWork ? '💼' : '🎓',
+    rate: isWork ? 185 : 0
+  })
+}
+
+const removeSetupActivity = (id) => {
+  if (setupForm.value.activities.length <= 1) return
+  setupForm.value.activities = setupForm.value.activities.filter(a => a.id !== id)
+}
+
 const submitSetup = () => {
   store.completeSetup({ name: setupForm.value.name || 'Kim' }, setupForm.value.expenses, setupForm.value.activities)
   showSetup.value = false
@@ -47,6 +63,9 @@ const submitSetup = () => {
     origin: { y: 0.6 }
   })
 }
+
+const activeDayIndex = ref(new Date().getDay() === 0 ? 6 : new Date().getDay() - 1)
+const mounted = ref(false)
 
 onMounted(() => {
   mounted.value = true
@@ -216,6 +235,20 @@ const onAdd = (evt, newDate) => {
           </div>
         </div>
 
+        <!-- Mobile Day Selector (New) -->
+        <div class="mobile-day-nav">
+          <button 
+            v-for="(day, index) in store.weekDays" 
+            :key="index"
+            class="day-nav-item"
+            :class="{ 'active': activeDayIndex === index }"
+            @click="activeDayIndex = index"
+          >
+            <span class="day-short">{{ format(day, 'EEEEEE', { locale: vi }) }}</span>
+            <span class="day-num">{{ format(day, 'dd') }}</span>
+          </button>
+        </div>
+
         <div class="analytics-grid">
           <div v-for="type in store.activityBreakdown" :key="type.id" class="analytic-item">
             <div class="item-head">
@@ -286,6 +319,9 @@ const onAdd = (evt, newDate) => {
                   <div class="card-top">
                     <span class="icon">{{ act.icon }}</span>
                     <input v-model="act.name" type="text" class="act-name-input">
+                    <button class="btn-delete-setup" @click="removeSetupActivity(act.id)" v-if="setupForm.activities.length > 1">
+                      <Trash2 :size="14" />
+                    </button>
                   </div>
                   <div v-if="act.isWork" class="card-rate">
                     <Wallet :size="14" />
@@ -293,6 +329,15 @@ const onAdd = (evt, newDate) => {
                     <span class="unit">TWD/h</span>
                   </div>
                 </div>
+              </div>
+              
+              <div class="setup-add-actions">
+                <button class="btn btn-ghost btn-sm" @click="addSetupActivity(true)">
+                  <Plus :size="14" /> Thêm Công việc
+                </button>
+                <button class="btn btn-ghost btn-sm" @click="addSetupActivity(false)">
+                  <Plus :size="14" /> Thêm Hoạt động
+                </button>
               </div>
             </div>
 
@@ -334,7 +379,12 @@ const onAdd = (evt, newDate) => {
 
             <!-- Activity Configuration -->
             <div class="panel-section">
-              <label class="font-heading"><Sparkles :size="16" /> Hoạt động & Thu nhập</label>
+              <div class="section-header-row">
+                <label class="font-heading"><Sparkles :size="16" /> Hoạt động & Thu nhập</label>
+                <div class="header-actions">
+                  <button class="btn-add-mini" @click="store.addActivityType(true)" title="Thêm Công việc"><Plus :size="14" /></button>
+                </div>
+              </div>
               <div class="config-list">
                 <div v-for="type in store.activityTypes" :key="type.id" class="config-item">
                   <div class="config-icon">{{ type.icon }}</div>
@@ -342,6 +392,7 @@ const onAdd = (evt, newDate) => {
                     <div class="row">
                       <input type="text" :value="type.name" @input="store.updateActivityType(type.id, { name: $event.target.value })" class="name-edit">
                       <input type="color" :value="type.color" @input="store.updateActivityType(type.id, { color: $event.target.value })" class="color-edit">
+                      <button class="btn-delete-mini" @click="store.removeActivityType(type.id)"><Trash2 :size="14" /></button>
                     </div>
                     <div v-if="type.isWork" class="row rate-row">
                       <Wallet :size="12" />
@@ -538,8 +589,51 @@ const onAdd = (evt, newDate) => {
 .rate-edit { width: 80px; background: rgba(0,0,0,0.3); border: none; color: white; font-weight: 800; padding: 4px; border-radius: 6px; text-align: center; }
 
 /* Mobile Adaptations */
+.mobile-day-nav { display: none; }
+
 @media (max-width: 1024px) {
-  .dashboard-header { padding: 1rem; }
+  .dashboard-header { padding: 1rem; border-bottom: 1px solid var(--border); }
+  
+  .mobile-day-nav {
+    display: flex;
+    gap: 8px;
+    padding: 0.75rem;
+    overflow-x: auto;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+  }
+
+  .day-nav-item {
+    flex: 1;
+    min-width: 48px;
+    height: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .day-nav-item .day-short { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; }
+  .day-nav-item .day-num { font-size: 1.1rem; font-weight: 900; font-family: var(--font-heading); }
+
+  .day-nav-item.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+    box-shadow: 0 4px 15px var(--primary-glow);
+    transform: translateY(-2px);
+  }
+
   .grid-content { 
     display: block; 
     padding: 0.5rem;
@@ -549,8 +643,11 @@ const onAdd = (evt, newDate) => {
     width: 100%; 
     min-width: 100%;
     display: none; 
+    border: none;
+    background: transparent;
   }
   .day-pane.active { display: flex; }
+  .pane-header { display: none; } /* Hide in mobile because of top nav */
 }
 
 @media (max-width: 768px) {
@@ -586,6 +683,20 @@ const onAdd = (evt, newDate) => {
 .act-name-input { flex: 1; background: transparent; border: none; font-size: 1.1rem; font-weight: 700; color: white; padding: 0; }
 .card-rate { display: flex; align-items: center; gap: 8px; padding-left: 52px; color: var(--text-muted); font-size: 0.8rem; }
 .card-rate input { width: 80px; background: rgba(0,0,0,0.2); border: none; padding: 4px 8px; border-radius: 6px; text-align: center; font-weight: 800; color: var(--accent); }
+
+.btn-delete-setup { background: transparent; border: none; color: var(--text-muted); opacity: 0.3; cursor: pointer; transition: 0.2s; }
+.btn-delete-setup:hover { color: var(--danger); opacity: 1; }
+
+.setup-add-actions { display: flex; gap: 0.75rem; margin-top: 1rem; }
+.btn-sm { padding: 0.5rem 0.75rem; font-size: 0.8rem; border-radius: 10px; }
+
+.section-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+.btn-add-mini, .btn-delete-mini { 
+  width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; 
+  background: var(--glass); border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; transition: 0.2s;
+}
+.btn-add-mini:hover { border-color: var(--primary); color: var(--primary); background: rgba(59, 130, 246, 0.1); }
+.btn-delete-mini:hover { border-color: var(--danger); color: var(--danger); background: rgba(239, 68, 68, 0.1); }
 
 .setup-footer.dual { display: flex; gap: 1rem; }
 .flex-1 { flex: 1; }
