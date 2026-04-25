@@ -1,4 +1,4 @@
-/* Fonts are loaded via index.html for better performance */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
   /* Pro Max Color Palette - Deep OLED + Taiwan Vibe */
@@ -28,7 +28,7 @@
 }
 
 body {
-  font-family: 'Be Vietnam Pro', sans-serif;
+  font-family: 'Inter', sans-serif;
   background-color: var(--bg);
   background-image: 
     radial-gradient(at 0% 0%, hsla(217, 91%, 60%, 0.05) 0px, transparent 50%),
@@ -37,7 +37,6 @@ body {
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
-  line-height: 1.5;
 }
 
 .app-container {
@@ -63,9 +62,9 @@ body {
 
 /* Typography Pro Max */
 h1, h2, h3, .font-heading {
-  font-family: 'Lexend', sans-serif;
+  font-family: 'Outfit', sans-serif;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
 
 /* Custom Scrollbar */
@@ -100,7 +99,7 @@ h1, h2, h3, .font-heading {
   cursor: pointer;
   transition: var(--transition);
   border: 1px solid transparent;
-  font-family: 'Lexend', sans-serif;
+  font-family: 'Outfit', sans-serif;
   white-space: nowrap;
 }
 
@@ -145,7 +144,6 @@ h1, h2, h3, .font-heading {
 
 /* Form Elements */
 select, input {
-  font-family: inherit;
   background: hsla(0, 0%, 0%, 0.3);
   border: 1px solid var(--border);
   color: white;
