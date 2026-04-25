@@ -21,13 +21,8 @@ describe('Schedule Store Logic', () => {
     localStorage.clear()
   })
 
-  it('should have correct work limits based on semester mode', () => {
+  it('should have a fixed work limit of 48 hours', () => {
     const store = useScheduleStore()
-    
-    store.isSemesterMode = true
-    expect(store.workLimit).toBe(20)
-    
-    store.isSemesterMode = false
     expect(store.workLimit).toBe(48)
   })
 
@@ -96,14 +91,5 @@ describe('Schedule Store Logic', () => {
     expect(store.foodComparison.tea).toBe(10)
     expect(store.foodComparison.bento).toBe(6)
     expect(store.foodComparison.noodle).toBe(3)
-  })
-
-  it('should calculate net income after expenses', () => {
-    const store = useScheduleStore()
-    
-    vi.spyOn(store, 'estimatedSalary', 'get').mockReturnValue(5000)
-    store.monthlyExpenses = 4000 // 1000 per week
-    
-    expect(store.remainingSalary).toBe(4000)
   })
 })

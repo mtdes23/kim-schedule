@@ -410,7 +410,6 @@ const handleLogout = () => {
         </div>
       </div>
     </Teleport>
-  </div>
 </template>
 
 <style scoped>
