@@ -170,11 +170,10 @@ const onAdd = (evt, newDate) => {
             @add="(evt) => onAdd(evt, day)"
             :animation="250"
             ghost-class="ghost-card"
-            handle=".drag-handle"
           >
             <template #item="{ element: act }">
               <div 
-                class="activity-tile drag-handle"
+                class="activity-tile"
                 :style="{ '--tile-color': getActivityType(act.activityId)?.color }"
               >
                 <div class="tile-header">
@@ -208,8 +207,8 @@ const onAdd = (evt, newDate) => {
             </template>
           </draggable>
 
-          <button class="btn-add-tile" @click="handleAdd(day)">
-            <Plus :size="18" /> Thêm hoạt động
+          <button class="list-add-btn" @click="handleAdd(day)">
+            <Plus :size="16" /> Thêm thẻ
           </button>
         </div>
       </div>
@@ -429,51 +428,89 @@ const onAdd = (evt, newDate) => {
 .day-num { font-size: 1.1rem; font-weight: 900; font-family: var(--font-heading); }
 .holiday-indicator { position: absolute; top: 6px; right: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; }
 
-/* Grid Layout */
-.grid-content { display: grid; grid-template-columns: repeat(7, 1fr); min-height: 550px; background: var(--border); gap: 1px; }
-.day-pane { background: rgba(10, 10, 15, 0.6); display: flex; flex-direction: column; }
-.pane-header { padding: 1.25rem 1rem; border-bottom: 1px solid var(--border); background: rgba(25, 25, 30, 0.4); }
-.date-info h2 { font-size: 1rem; margin: 0; }
-.date-sub { font-size: 0.65rem; color: var(--text-muted); }
-
-.holiday-toggle-btn {
-  margin-top: 0.75rem; width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;
-  padding: 6px; border-radius: 8px; border: 1px solid var(--border); background: rgba(255, 255, 255, 0.03);
-  color: var(--text-muted); font-size: 0.7rem; font-weight: 700; cursor: pointer; transition: var(--transition);
+/* Trello-style Grid Layout */
+.grid-content { 
+  display: flex; 
+  gap: 1rem; 
+  padding: 1rem; 
+  overflow-x: auto; 
+  min-height: 600px;
+  background: var(--bg-sub);
+  scroll-behavior: smooth;
 }
-.holiday-toggle-btn.is-active { background: rgba(245, 158, 11, 0.1); border-color: var(--accent); color: var(--accent); }
 
-/* Activity Tiles */
-.cards-container { padding: 1rem; display: flex; flex-direction: column; gap: 1rem; flex: 1; }
+.day-pane { 
+  min-width: 320px;
+  width: 320px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 16px;
+  display: flex; 
+  flex-direction: column;
+  border: 1px solid var(--border);
+  height: fit-content;
+  max-height: 100%;
+}
+
+.pane-header { 
+  padding: 1.25rem 1rem; 
+  border-bottom: 1px solid var(--border); 
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 16px 16px 0 0;
+}
+.date-info h2 { font-size: 1rem; margin: 0; font-family: var(--font-heading); color: white; }
+.date-sub { font-size: 0.7rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+
+/* Activity Tiles (Trello Cards) */
+.cards-container { 
+  padding: 0.75rem; 
+  display: flex; 
+  flex-direction: column; 
+  gap: 0.75rem; 
+  flex: 1;
+  min-height: 50px;
+}
 .activity-tile {
-  background: rgba(30, 30, 35, 0.6); border-radius: 16px; border: 1px solid var(--border);
-  padding: 0.85rem; cursor: grab; transition: var(--transition);
-  border-left: 5px solid var(--tile-color);
+  background: rgba(30, 30, 35, 0.8);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 1rem;
+  cursor: grab;
+  transition: var(--transition);
+  border-top: 4px solid var(--tile-color);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
-.activity-tile:hover { transform: scale(1.02); background: rgba(40, 40, 45, 0.8); }
-
-.tile-header { display: flex; align-items: center; gap: 8px; margin-bottom: 0.75rem; }
-.type-badge { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; font-size: 1rem; }
-.tile-select { flex: 1; background: transparent; border: none; font-size: 0.85rem; font-weight: 700; color: white; cursor: pointer; }
-.tile-delete { background: transparent; border: none; color: var(--text-muted); cursor: pointer; opacity: 0.3; transition: 0.2s; }
-.tile-delete:hover { color: var(--danger); opacity: 1; }
-
-.tile-time {
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-  background: rgba(0, 0, 0, 0.3); padding: 6px; border-radius: 10px; margin-bottom: 0.5rem;
+.activity-tile:hover { 
+  transform: translateY(-2px);
+  background: rgba(45, 45, 50, 0.95);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  border-color: rgba(255,255,255,0.1);
 }
-.tile-time input { width: 60px; text-align: center; font-size: 0.85rem; font-weight: 700; background: transparent; border: none; padding: 0; }
-.time-sep { opacity: 0.3; }
-
-.tile-note { display: flex; align-items: center; gap: 6px; padding: 4px 8px; background: rgba(255, 255, 255, 0.03); border-radius: 6px; }
-.tile-note input { flex: 1; background: transparent; border: none; font-size: 0.7rem; color: var(--text-muted); padding: 0; outline: none; }
-
-.btn-add-tile {
-  margin: 1rem; padding: 0.75rem; border-radius: 12px; border: 1px dashed var(--border);
-  background: transparent; color: var(--text-muted); font-size: 0.8rem; font-weight: 600;
-  display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; transition: 0.2s;
+.ghost-card {
+  opacity: 0.4;
+  background: var(--primary) !important;
+  border: 2px dashed white !important;
 }
-.btn-add-tile:hover { border-color: var(--primary); color: var(--primary); background: rgba(59, 130, 246, 0.05); }
+
+.list-add-btn {
+  margin: 0.5rem 0.75rem 1rem;
+  padding: 0.75rem;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+  text-align: left;
+}
+.list-add-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
 
 /* Analytics Footer */
 .analytics-footer { padding: 1.5rem 2rem; background: rgba(20, 20, 25, 0.8); border-top: 1px solid var(--border); }
